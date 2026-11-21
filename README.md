@@ -1,6 +1,6 @@
 # Разработка автоматизированных UI и API тестов на примере Swag Labs и ReqRes с использованием Python
 
-![Python](https://img.shields.io/badge/Python-3.13-blue?style=flat-square&logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12.7-blue?style=flat-square&logo=python&logoColor=white)
 ![Pytest](https://img.shields.io/badge/Pytest-Framework-green?style=flat-square&logo=pytest&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-UI%20Testing-45ba4b?style=flat-square&logo=playwright&logoColor=white)
 ![Allure](https://img.shields.io/badge/Allure-Report-yellowgreen?style=flat-square&logo=allurereport&logoColor=white)
@@ -15,7 +15,7 @@
     * CRUD-операции с пользователями (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`), пагинация и проверка `404`.
     * Регистрация и авторизация (позитивные проверки и негативные кейсы с ошибкой `400`).
     * Получение списка ресурсов, одиночного ресурса и проверка задержки ответа.
-* **UI-тесты (13 тестов для [SauceDemo](https://www.saucedemo.com/)):**
+* **UI-тесты (13 тестов для [Swag Labs](https://www.saucedemo.com/)):**
     * Авторизация (валидный пользователь, заблокированный пользователь, пустые поля и неверный пароль).
     * Сортировка товаров по цене и по алфавиту.
     * Добавление и удаление товара в корзине, оформление заказа (E2E), валидация формы покупателя и выход из системы
