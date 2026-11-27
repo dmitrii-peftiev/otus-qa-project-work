@@ -16,12 +16,12 @@ class LoginPage(BasePage):
     def login(self, username: str, password: str) -> None:
         with allure.step(f"Login as '{username}'"):
             self.fill(self.USERNAME_INPUT, username)
-            self.fill(self.PASSWORD_INPUT, password)
+            self.fill(self.PASSWORD_INPUT, password, mask=True)
             self.click(self.LOGIN_BUTTON)
 
     def get_error_text(self) -> str:
         return self.get_text(self.ERROR_MESSAGE)
 
-    def is_login_button_visible(self) -> bool:
-        self.page.locator(self.LOGIN_BUTTON).wait_for(state="visible")
-        return self.is_visible(self.LOGIN_BUTTON)
+    def check_login_button_visible(self) -> None:
+        with allure.step("Check login button is visible"):
+            self.expect_visible(self.LOGIN_BUTTON)

@@ -6,10 +6,9 @@ from src.pages.base_page import BasePage
 class InventoryPage(BasePage):
     TITLE = ".title"
     SORT_SELECT = "[data-test='product-sort-container']"
+    INVENTORY_ITEM = ".inventory_item"
     ITEM_NAMES = ".inventory_item_name"
     ITEM_PRICES = ".inventory_item_price"
-    ADD_BACKPACK_BTN = "[data-test='add-to-cart-sauce-labs-backpack']"
-    REMOVE_BACKPACK_BTN = "[data-test='remove-sauce-labs-backpack']"
     CART_BADGE = ".shopping_cart_badge"
     CART_LINK = ".shopping_cart_link"
     BURGER_MENU_BTN = "#react-burger-menu-btn"
@@ -29,11 +28,24 @@ class InventoryPage(BasePage):
         texts = self.page.locator(self.ITEM_PRICES).all_inner_texts()
         return [float(price.replace("$", "")) for price in texts]
 
-    def add_backpack_to_cart(self) -> None:
-        self.click(self.ADD_BACKPACK_BTN)
+    def _get_item_card(self, item_name: str):
+        return self.page.locator(self.INVENTORY_ITEM).filter(has_text=item_name)
 
-    def remove_backpack_from_cart(self) -> None:
-        self.click(self.REMOVE_BACKPACK_BTN)
+    def get_item_price(self, item_name: str) -> float:
+        price_text = (
+            self._get_item_card(item_name).locator(self.ITEM_PRICES).inner_text()
+        )
+        return float(price_text.replace("$", ""))
+
+    def add_item_to_cart(self, item_name: str) -> None:
+        with allure.step(f"Add '{item_name}' to cart"):
+            self._get_item_card(item_name).locator(
+                "button:has-text('Add to cart')"
+            ).click()
+
+    def remove_item_from_cart(self, item_name: str) -> None:
+        with allure.step(f"Remove '{item_name}' from cart"):
+            self._get_item_card(item_name).locator("button:has-text('Remove')").click()
 
     def get_cart_count(self) -> int:
         if self.is_visible(self.CART_BADGE):
@@ -46,5 +58,5 @@ class InventoryPage(BasePage):
     def logout(self) -> None:
         with allure.step("Logout from application"):
             self.click(self.BURGER_MENU_BTN)
-            self.page.locator(self.LOGOUT_LINK).wait_for(state="visible")
+            self.expect_visible(self.LOGOUT_LINK)
             self.click(self.LOGOUT_LINK)

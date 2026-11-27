@@ -3,6 +3,7 @@ from typing import Any
 
 import allure
 import pytest
+from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import Page, sync_playwright
 
 from src.api.client import ApiClient
@@ -11,8 +12,10 @@ from src.utils.config import config
 
 
 @pytest.fixture(scope="session")
-def api_client() -> ApiClient:
-    return ApiClient()
+def api_client() -> Generator[ApiClient, Any, None]:
+    client = ApiClient()
+    yield client
+    client.close()
 
 
 @pytest.fixture(scope="session")
@@ -33,14 +36,22 @@ def page(browser, request) -> Generator[Page, Any, None]:
     try:
         yield page
     finally:
-        if hasattr(request.node, "rep_call") and request.node.rep_call.failed:
-            screenshot = page.screenshot(full_page=True)
+        try:
+            if hasattr(request.node, "rep_call") and request.node.rep_call.failed:
+                screenshot = page.screenshot(full_page=True)
+                allure.attach(
+                    screenshot,
+                    name=f"screenshot_{request.node.name}",
+                    attachment_type=allure.attachment_type.PNG,
+                )
+        except PlaywrightError as e:
             allure.attach(
-                screenshot,
-                name=f"screenshot_{request.node.name}",
-                attachment_type=allure.attachment_type.PNG,
+                f"Failed to capture screenshot: {e}",
+                name="screenshot_error",
+                attachment_type=allure.attachment_type.TEXT,
             )
-        context.close()
+        finally:
+            context.close()
 
 
 @pytest.fixture(scope="function")

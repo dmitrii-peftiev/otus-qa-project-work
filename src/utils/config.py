@@ -8,6 +8,7 @@ load_dotenv()
 class Config:
     API_BASE_URL = os.getenv("API_BASE_URL", "https://reqres.in/api")
     API_KEY = os.getenv("API_KEY", "")
+    API_TIMEOUT = int(os.getenv("API_TIMEOUT", "10"))
 
     UI_BASE_URL = os.getenv("UI_BASE_URL", "https://www.saucedemo.com")
     STANDARD_USER = os.getenv("STANDARD_USER", "standard_user")
