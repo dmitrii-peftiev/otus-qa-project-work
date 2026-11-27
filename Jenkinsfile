@@ -14,11 +14,19 @@ pipeline {
     }
 
     stages {
+        stage('Code Quality (Ruff)') {
+            steps {
+                sh 'ruff check .'
+            }
+        }
+
         stage('Run tests') {
             steps {
-                script {
-                    def marker = params.TEST_SUITE == 'all' ? '' : "-m ${params.TEST_SUITE}"
-                    sh "pytest ${marker} || true"
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script {
+                        def marker = params.TEST_SUITE == 'all' ? '' : "-m ${params.TEST_SUITE}"
+                        sh "pytest ${marker}"
+                    }
                 }
             }
         }
@@ -26,9 +34,13 @@ pipeline {
 
     post {
         always {
-            allure includeProperties: false,
-            jdk: '',
-            results: [[path: 'allure-results']]
+            script {
+                if (fileExists('allure-results')) {
+                    allure includeProperties: false,
+                    jdk: '',
+                    results: [[path: 'allure-results']]
+                }
+            }
         }
     }
 }
